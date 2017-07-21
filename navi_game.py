@@ -1,6 +1,6 @@
 #! /usr/bin/env python
 '''
-Simple game where Navigators attempt to route to a goal "flag"
+Simple game where a Navigator attempts to route to a goal "flag"
 '''
 
 # game imports
@@ -9,6 +9,7 @@ from game import BoardGame
 from board import Board
 from figure import Figure, FigureStrategy
 from logger import log
+from game_display_helper import make_gif
 
 # utilities
 import numpy as np
@@ -17,8 +18,8 @@ import pdb
 # Navigator game main class
 class NaviGame(BoardGame):
     def __init__(self,
-            height,
-            width,
+            height = 11,
+            width= 11,
             goal = None,
             moving_target = False,
             tolerance = 1.1,
@@ -215,5 +216,6 @@ class NaviStrategy(FigureStrategy):
                 self.step(choice = choice)
 
 if __name__=='__main__':
-    test_game = NaviGame(8, 8, moving_target = True, tolerance = 1.4, goal_idle = 4)
+    test_game = NaviGame(moving_target = True, tolerance = 1.4, goal_idle = 2)
     test_game.setup()
+    make_gif(test_game, 50)
