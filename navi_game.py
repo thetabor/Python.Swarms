@@ -18,8 +18,8 @@ import pdb
 # Navigator game main class
 class NaviGame(BoardGame):
     def __init__(self,
-            height = 11,
-            width= 11,
+            height = 13,
+            width= 19,
             goal = None,
             moving_target = False,
             tolerance = 1.1,
@@ -48,14 +48,14 @@ class NaviGame(BoardGame):
         self.Flag.color = 2
         self.Navigator = Figure(self.board)
         self.Navigator.bindStrategy(NaviStrategy(
-                                    goal = (self.goal[1], self.goal[0]),
+                                    goal = (self.goal[0], self.goal[1]),
                                     tolerance = self.tolerance))
         self.Navigator.strategy.placeIt()
         self.Navigator.color = 3
 
     def shift_goal(self, goal = None, figure = None):
         if goal == None:
-            goal = (randint(0, self.board.width-1), randint(0, self.board.height-1))
+            goal = (randint(0, self.board.height-1), randint(0, self.board.width-1))
         try:
             self.goal = goal
             self.Flag.move(y = goal[0], x = goal[1], relative=False)
@@ -66,12 +66,24 @@ class NaviGame(BoardGame):
         except:
             self.shift_goal()
 
+    def shift_figure(self, figure):
+        new_pos_x = randint(0, self.board.width-1)
+        new_pos_y = randint(0, self.board.height-1)
+        try:
+            figure.move(y = new_pos_y, x = new_pos_x, relative = False)
+        except:
+            self.shift_figure(figure)
+
     def step(self):
         for figure in self.board.figures:
             figure.strategy.step()
         if (self.Navigator.strategy.at_goal > self.goal_idle) \
                         and (self.moving_target == True):
             self.shift_goal()
+            self.wins += 1
+            self.Navigator.strategy.at_goal = 0
+        elif (self.Navigator.strategy.at_goal > self.goal_idle):
+            self.shift_figure(self.Navigator)
             self.wins += 1
             self.Navigator.strategy.at_goal = 0
         self.display_str = self.display_str_base + ", Wins: " + str(self.wins)
@@ -216,6 +228,6 @@ class NaviStrategy(FigureStrategy):
                 self.step(choice = choice)
 
 if __name__=='__main__':
-    test_game = NaviGame(moving_target = True, tolerance = 1.4, goal_idle = 2)
+    test_game = NaviGame(moving_target = False, tolerance = 1.4, goal_idle = 2)
     test_game.setup()
-    make_gif(test_game, 50)
+    make_gif(test_game, 100)

@@ -44,8 +44,11 @@ def step_and_draw_game(game, mpl=True, save = False, filename = None, display = 
     draw_game(game, mpl, save, filename, display)
 
 def animate_game(game, n, mpl=True, save = False, display = True):
+    if n > 1000:
+        print("n too large")
+        return
     for i in range(n):
-        if (n >= 10) and (i < 10):
+        if (n >= 10) and (n < 100) and (i < 10):
             fn = "0" + str(i)
         elif (n >= 100) and (i < 10):
             fn = "00" + str(i)
