@@ -19,7 +19,7 @@ def draw_game(game, mpl=True, save = False, filename = "game_image.png", display
         pl.pcolor(s_colors)
         ax.tick_params(labelbottom='off', labelleft='off')
         # pl.colorbar()
-        pl.title(game.display_str)
+        # pl.title(game.display_str)
         if save == True: pl.savefig(filename)
         if display == True: pl.show();
     else:
@@ -67,14 +67,16 @@ def get_strategies(game):
     for figure in game.board.figures:
         print(figure.strategy.deltaY, figure.strategy.deltaX)
 
-def make_gif(game, steps):
+def make_gif(game, steps, filename = "compiled"):
     print("stepping game and saving images...")
     animate_game(game, steps, save = True, display = False)
     print("compiling gif")
     mypath = "anim/"
     filenames = [join(mypath, f) for f in listdir(mypath) if isfile(join(mypath, f))]
     images = []
-    for filename in filenames[1:]:
-        images.append(imageio.imread(filename))
-    imageio.mimsave('anim/compiled.gif', images)
+    for f in filenames[1:]:
+        images.append(imageio.imread(f))
+
+    file_str = filename + '.gif'
+    imageio.mimsave(file_str, images)
     print("gif made")
