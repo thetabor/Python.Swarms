@@ -20,17 +20,14 @@ class NaviGame(BoardGame):
     def __init__(self,
             height = 13,
             width= 19,
-            goal = None,
-            moving_target = False,
+            #goal = None,
+            #moving_target = False,
             tolerance = 1.1,
             goal_idle = 2,
             display_str = "NaviGame"):
         self.board = Board(height, width)
-        # if goal == None:
-        #     self.goal = (randint(0,width-1), randint(0,height-1))
-        # else:
-        self.goal = goal
-        self.moving_target = moving_target
+        self.goal = (int(height/2), int(width/2))
+        # self.moving_target = moving_target
         self.tolerance = tolerance
         self.goal_idle = goal_idle
         self.display_str_base = display_str
@@ -40,11 +37,8 @@ class NaviGame(BoardGame):
         self.Flag = Figure(self.board)
         self.Flag.bindStrategy(FlagStrategy())
         if self.goal == None:
-            self.Flag.strategy.placeIt()
-            self.goal = self.Flag.position()
-        else:
-            # pdb.set_trace()
-            self.Flag.strategy.placeIt(y = self.goal[0], x = self.goal[1])
+            self.goal = (randint(0, self.board.height-1), randint(0, self.board.width-1))
+        self.Flag.strategy.placeIt(y = self.goal[0], x = self.goal[1])
         self.Flag.color = 2
         self.Navigator = Figure(self.board)
         self.Navigator.bindStrategy(NaviStrategy(
@@ -77,12 +71,13 @@ class NaviGame(BoardGame):
     def step(self):
         for figure in self.board.figures:
             figure.strategy.step()
-        if (self.Navigator.strategy.at_goal > self.goal_idle) \
-                        and (self.moving_target == True):
-            self.shift_goal()
-            self.wins += 1
-            self.Navigator.strategy.at_goal = 0
-        elif (self.Navigator.strategy.at_goal > self.goal_idle):
+        # moving target code - not relevant for a while
+        # if (self.Navigator.strategy.at_goal > self.goal_idle) \
+        #                 and (self.moving_target == True):
+        #     self.shift_goal()
+        #     self.wins += 1
+        #     self.Navigator.strategy.at_goal = 0
+        if (self.Navigator.strategy.at_goal > self.goal_idle):
             self.shift_figure(self.Navigator)
             self.wins += 1
             self.Navigator.strategy.at_goal = 0
@@ -228,6 +223,6 @@ class NaviStrategy(FigureStrategy):
                 self.step(choice = choice)
 
 if __name__=='__main__':
-    test_game = NaviGame(moving_target = False, tolerance = 1.4, goal_idle = 2)
+    test_game = NaviGame(tolerance = 1.4, goal_idle = 2)
     test_game.setup()
-    make_gif(test_game, 100)
+    make_gif(test_game, n = 100)
