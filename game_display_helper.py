@@ -43,7 +43,7 @@ def step_and_draw_game(game, mpl=True, save = False, filename = None, display = 
     step_game(game)
     draw_game(game, mpl, save, filename, display)
 
-def animate_game(game, n, mpl=True, save = False, show = False):
+def animate_game(game, n, mpl=True, save = False, display = True):
     if n > 1000:
         print("n too large")
         return
@@ -57,19 +57,19 @@ def animate_game(game, n, mpl=True, save = False, show = False):
         else:
             fn = str(i)
         filename =  "anim/" + fn + ".png"
-        if show == True:
+        if display == True:
             display.clear_output(wait=True)
             display.display(step_and_draw_game(game, mpl, save, filename));
         else:
-            step_and_draw_game(game, mpl, save, filename, show)
+            step_and_draw_game(game, mpl, save, filename, display)
 
 def get_strategies(game):
     for figure in game.board.figures:
         print(figure.strategy.deltaY, figure.strategy.deltaX)
 
-def make_gif(game, n, filename = "compiled"):
+def make_gif(game, steps, filename = "compiled"):
     print("stepping game and saving images...")
-    animate_game(game, n, save = True, show = False)
+    animate_game(game, steps, save = True, display = False)
     print("compiling gif")
     mypath = "anim/"
     filenames = [join(mypath, f) for f in listdir(mypath) if isfile(join(mypath, f))]
