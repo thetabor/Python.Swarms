@@ -26,10 +26,10 @@ class NaviGame(BoardGame):
             goal_idle = 2,
             display_str = "NaviGame"):
         self.board = Board(height, width)
-        # if goal == None:
-        #     self.goal = (randint(0,width-1), randint(0,height-1))
-        # else:
-        self.goal = goal
+        if goal == None:
+            self.goal = (int(height/2), int(width/2))
+        else:
+            self.goal = goal
         self.moving_target = moving_target
         self.tolerance = tolerance
         self.goal_idle = goal_idle
@@ -228,6 +228,9 @@ class NaviStrategy(FigureStrategy):
                 self.step(choice = choice)
 
 if __name__=='__main__':
-    test_game = NaviGame(moving_target = False, tolerance = 1.4, goal_idle = 2)
+    test_game = NaviGame(
+        moving_target = False,
+        tolerance = 1.4,
+        goal_idle = 2)
     test_game.setup()
     make_gif(test_game, 100)
