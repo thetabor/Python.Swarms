@@ -7,7 +7,7 @@ from os import listdir
 from os.path import isfile, join
 from IPython import display
 
-def draw_game(game, mpl=True, save = False, filename = "game_image.png", display = True):
+def draw_game(game, mpl=True, save = False, filename = "game_image.png", show = True):
     s = np.array(game.board.cells)
     color = lambda i: 0 if i == None else i.color
     colormask = np.vectorize(color)
@@ -21,7 +21,7 @@ def draw_game(game, mpl=True, save = False, filename = "game_image.png", display
         # pl.colorbar()
         # pl.title(game.display_str)
         if save == True: pl.savefig(filename)
-        if display == True: pl.show();
+        if show == True: pl.show();
     else:
         print(s_colors)
 
@@ -39,11 +39,11 @@ def step_test(game, n=10):
         else:
             draw_game(game)
 
-def step_and_draw_game(game, mpl=True, save = False, filename = None, display = True):
+def step_and_draw_game(game, mpl=True, save = False, filename = None, show = True):
     step_game(game)
-    draw_game(game, mpl, save, filename, display)
+    draw_game(game, mpl, save, filename, show)
 
-def animate_game(game, n, mpl=True, save = False, display = True):
+def animate_game(game, n, mpl=True, save = False, show = True):
     if n > 1000:
         print("n too large")
         return
@@ -57,11 +57,11 @@ def animate_game(game, n, mpl=True, save = False, display = True):
         else:
             fn = str(i)
         filename =  "anim/" + fn + ".png"
-        if display == True:
+        if show == True:
             display.clear_output(wait=True)
             display.display(step_and_draw_game(game, mpl, save, filename));
         else:
-            step_and_draw_game(game, mpl, save, filename, display)
+            step_and_draw_game(game, mpl, save, filename, show)
 
 def get_strategies(game):
     for figure in game.board.figures:
@@ -69,14 +69,16 @@ def get_strategies(game):
 
 def make_gif(game, steps, filename = "compiled"):
     print("stepping game and saving images...")
-    animate_game(game, steps, save = True, display = False)
+    animate_game(game, steps, save = True, show = False)
     print("compiling gif")
     mypath = "anim/"
+    
     filenames = [join(mypath, f) for f in listdir(mypath) if isfile(join(mypath, f))]
-    images = []
-    for f in filenames[1:]:
-        images.append(imageio.imread(f))
-
+    filenames.sort()
     file_str = filename + '.gif'
-    imageio.mimsave(file_str, images)
+    with imageio.get_writer(file_str, mode='I', duration=0.25) as writer:
+        for imname in filenames:
+            if (imname[0:6] != 'anim/.'):
+                image = imageio.imread(imname)
+                writer.append_data(image)
     print("gif made")
